@@ -3,7 +3,6 @@ import pygame
 import random
 import math
 import sys
-import os
 
 # Level maze data
 
@@ -11,7 +10,7 @@ LEVEL_LAYOUTS = [
     # Level 1 - Simple classic layout
     [
         "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-        "W............WW............W",
+        "WG...........WW...........GW",
         "W.WWWW.WWWWW.WW.WWWWW.WWWW.W",
         "WoWWWW.WWWWW.WW.WWWWW.WWWWoW",
         "W.WWWW.WWWWW.WW.WWWWW.WWWW.W",
@@ -22,9 +21,9 @@ LEVEL_LAYOUTS = [
         "WWWWWW.WWWWW WW WWWWW.WWWWWW",
         "WWWWWW.WWWWW WW WWWWW.WWWWWW",
         "WWWWWW.WW          WW.WWWWWW",
-        "WWWWWW.WW WWWGGWWW WW.WWWWWW",
+        "WWWWWW.WW WWW  WWW WW.WWWWWW",
         "WWWWWW.WW W      W WW.WWWWWW",
-        "      .   W      W   .      ",
+        "      .   W   P  W   .      ",
         "WWWWWW.WW W      W WW.WWWWWW",
         "WWWWWW.WW WWWWWWWW WW.WWWWWW",
         "WWWWWW.WW          WW.WWWWWW",
@@ -39,296 +38,9 @@ LEVEL_LAYOUTS = [
         "W......WW....WW....WW......W",
         "W.WWWWWWWWWW.WW.WWWWWWWWWW.W",
         "W.WWWWWWWWWW.WW.WWWWWWWWWW.W",
-        "W...........P............W.W",
+        "WG........................GW",
         "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
     ],
-    
-    # Level 2 - More complex layout
-    [
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-        "W.........................oW",
-        "W.WWWWWW.WWWWW.WWWWW.WWWWW.W",
-        "W.WWWWWW.WWWWW.WWWWW.WWWWW.W",
-        "W.WW.....WW....WW....WW....W",
-        "W.WW.WWW.WW.WWWWW.WWWWW.WW.W",
-        "W.WW.WWW.WW.WWWWW.WWWWW.WW.W",
-        "W....WWW.............WWW...W",
-        "WWWW.WWW.WWW.WWW.WWW.WWW.WWW",
-        "WWWW.WWW.WWW.WWW.WWW.WWW.WWW",
-        "W....WWW.WWW.....WWW.WWW...W",
-        "W.WWWWWW.WWWWW.WWWWW.WWWWW.W",
-        "W.WWWWWW.WWWWW.WWWWW.WWWWW.W",
-        "Wo........G...P...G.......oW",
-        "WWWWWWWW.WWWWW.WWWWW.WWWWWWW",
-        "WWWWWWWW.WWWWW.WWWWW.WWWWWWW",
-        "W.............W............W",
-        "W.WWW.WWWWWWW.W.WWWWWWW.WWW.",
-        "W.WWW.WWWWWWW.W.WWWWWWW.WWW.",
-        "W.WWW.........W.........WWW.",
-        "W.WWW.WWWWWWWWWWWWWWWWW.WWW.",
-        "W.WWW.WWWWWWWWWWWWWWWWW.WWW.",
-        "W.....WWWWWWWWWWWWWWWWW.....",
-        "WWWWW.WWWWWWWWWWWWWWWWW.WWWW",
-        "WWWWW.WWWWWWWWWWWWWWWWW.WWWW",
-        "WWWWW...................WWWW",
-        "WWWWWoWWWWWWWWWWWWWWWWWoWWWW",
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    ],
-    
-    # Level 3 - Spiral maze
-    [
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-        "W..........................W",
-        "W.WWWWWWWWWWWWWWWWWWWWWWWW.W",
-        "W.WP.......................W",
-        "W.W.WWWWWWWWWWWWWWWWWWWWW.W",
-        "W.W.W.....................W",
-        "W.W.W.WWWWWWWWWWWWWWWWWW.W.W",
-        "W.W.W.W...................W",
-        "W.W.W.W.WWWWWWWWWWWWWWWW.W.W",
-        "W.W.W.W.W.................W",
-        "W.W.W.W.W.WWWWWWWWWWWWWW.W.W",
-        "W.W.W.W.W.W...............W",
-        "W.W.W.W.W.W.WWWWWWWWWWWW.W.W",
-        "W.W.W.W.W.W.W....G.......W.W",
-        "W.W.W.W.W.W.W.WWWWWWWWWW.W.W",
-        "WGW.W.W.W.W.W.W.........W.W",
-        "W...W.W.W.W.W.W.WWWWWWW.W.W",
-        "WWW.W.W.W.W.W.W.W.....W.W.W",
-        "W...W.W.W.W.W.W.WGW.W.W.W.W",
-        "W.WWW.W.W.W.W.W...W.W.W.W.W",
-        "W.....W.W.W.W.WWW.W.W.W.W.W",
-        "WWWWWWW.W.W.W...W.W.W.W.W.W",
-        "W.......W.W.WWW.W.W.W.W.W.W",
-        "W.WWWWWWW.W...W.W.W.W.W.W.W",
-        "W.........WWW.W.W.W.W.W...W",
-        "WWWWWWWWWW....W.W.W.W.WWW.W",
-        "Wo............W.W.W.W.....W",
-        "WWWWWWWWWWWWWWW.W.W.WWWWWWW",
-        "Wo..............W.........oW",
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    ],
-    
-    # Level 4 - Open center
-    [
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-        "W..........................W",
-        "W.WWWW.WWWWW.WWWW.WWWWW.WW.W",
-        "WoWWWW.WWWWW.WWWW.WWWWW.WWoW",
-        "W.WWWW...WWW.WWWW.WWW...WW.W",
-        "W......W....WWWWWW....W....W",
-        "WWWWWW.WWWW........WWWW.WWWW",
-        "WWWWWW.WWWWW.WWWW.WWWWW.WWWW",
-        "WWWWWW.WWWWW.WWWW.WWWWW.WWWW",
-        "WWWWWW.WW.............WW.WWWW",
-        "WWWWWW.WW.WWWWWWWWWW.WW.WWWW",
-        "WWWWWW.WW.WWWWWWWWWW.WW.WWWW",
-        "WWWWWW.WW.WW      WW.WW.WWWW",
-        "      .   WW      WW   .    ",
-        "WWWWWW.WW WW  GG  WW WW.WWWW",
-        "WWWWWW.WW WW  GG  WW WW.WWWW",
-        "WWWWWW.WW WW      WW WW.WWWW",
-        "WWWWWW.WW WWWWWWWWWW WW.WWWW",
-        "WWWWWW.WW          P WW.WWWW",
-        "WWWWWW.WW WWWWWWWWWWWWW.WWWW",
-        "WWWWWW.WW WWWWWWWWWWWWW.WWWW",
-        "W......WW.............WW...W",
-        "W.WWWW.WWWWW.WWWW.WWWWW.WW.W",
-        "W.WWWW.WWWWW.WWWW.WWWWW.WW.W",
-        "Wo.WWW...........WWW...WWoW",
-        "WWW.WWWWWWWWWWWWWWWWWWW.WWWW",
-        "WWW..........................W",
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    ],
-    
-    # Level 5 - Checkerboard
-    [
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-        "W..........................W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.........................oW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "Wo........................W",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "W..........................W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W...G.....................oW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "W..........................W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W...P.....G................W",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "W.........................oW",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "Wo.........................W",
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    ],
-    
-    # Level 6 - Pathways
-    [
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-        "W..........................W",
-        "W.WWWWWWWWWWWWWWWWWWWWWWWW.W",
-        "W.W........................W",
-        "W.W.WWWWWWWWWWWWWWWWWWWWWW.W",
-        "W.W.W......................W",
-        "W.W.W.WWWWWWWWWWWWWWWWWWWW.W",
-        "W.W.W.W....................W",
-        "W.W.W.W.WWWWWWWWWWWWWWWWWW.W",
-        "W.W.W.W.W................W.W",
-        "W.W.W.W.W.WWWWWWWWWWWWWW.W.W",
-        "W.W.W.W.W.W...g..........W.W",
-        "W.W.W.W.W.W.WWWWWW.WWWWW.W.W",
-        "W.W.W.W.W.W.WP........GW.W.W",
-        "W.W.W.W.W.W.WWW.WWWWWWWW.W.W",
-        "W.W.W.W.W.W..............W.W",
-        "W.W.W.W.W.WWWWWWWWWWWWWW.W.W",
-        "W.W.W.W.W................W.W",
-        "W.W.W.W.WWWWWWWWWWWWWWWW.W.W",
-        "W.W.W.W..................W.W",
-        "W.W.W.WWWWWWWWWWWWWWWWWW.W.W",
-        "W.W.W.....................W.W",
-        "W.W.WWWWWWWWWWWWWWWWWWWW.W.W",
-        "W.W.......................W.W",
-        "W.WWWWWWWWWWWWWWWWWWWWWW.W.W",
-        "W.........................W.W",
-        "WoWWWWWWWWWWWWWWWWWWWWWWWWoW",
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    ],
-    
-    # Level 7 - Chambers
-    [
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-        "W...........W............W.W",
-        "W.WWWWWWWWW.W.WWWWWWWWWW.W.W",
-        "W.W.......W.W.W........W.W.W",
-        "W.W.WWWWW.W.W.W.WWWWWW.W.W.W",
-        "W.W.W...W.W.W.W.W....W.W.W.W",
-        "W.W.W.W.W.W.W.W.W.WW.W.W.W.W",
-        "W.W.W.W.W.W.W.W.W.WW.W.W.W.W",
-        "W...W.W.W...W...W.WW.W...W.W",
-        "WWWWW.W.WWWWWWWWW.WW.WWWWW.W",
-        "Wo....W...........WW.....oW",
-        "WWWWWWWWWWWWWWWWW.WWWWWWWWWW",
-        "W.............W...W........W",
-        "W.WWWWWWWWWWW.W.WWW.WWWWWW.W",
-        "W.W...........W...W.W....W.W",
-        "W.W.WWWWWWWWWWWWW.W.W.WW.W.W",
-        "W.W.W.............W.W.WW.W.W",
-        "W.W.W.WWWWWWWWWWWWW.W.WW.W.W",
-        "W.W.W.W...........GW.WW.W.W",
-        "W.W.W.W.WWWWWWWWWWW..WW.W.W",
-        "W.W.W.W.WP..G........WW.W.W",
-        "W.W.W.W.WWWWWWWWWWWWWWW.W.W",
-        "W.W.W.W...............W.W.W",
-        "W.W.W.WWWWWWWWWWWWWWW.W.W.W",
-        "W.W.W.................W.W.W",
-        "W.W.WWWWWWWWWWWWWWWWWWW.W.W",
-        "W.W.......................W",
-        "WoWWWWWWWWWWWWWWWWWWWWWWWWoW",
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    ],
-    
-    # Level 8 - Scattered Walls
-    [
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-        "W.................G........W",
-        "W.WWWW.WWWWW.WWWWW.WWWW.WW.W",
-        "W.WWWW.WWWWW.WWWWW.WWWW.WW.W",
-        "W..........................W",
-        "WWW.WWWWW.WWWWW.WWWWW.WWW.WW",
-        "WWW.WWWWW.WWWWW.WWWWW.WWW.WW",
-        "W..........................W",
-        "W.WWWW.WWWWW.WWWWW.WWWW.WW.W",
-        "W.WWWW.WWWWW.WWWWW.WWWW.WW.W",
-        "W.......................W..W",
-        "WWW.WWWWW.WWWWW.WWWWW.WWW.WW",
-        "WWW.WWWWW.WWWWW.WWWWW.WWW.WW",
-        "WP.........................W",
-        "WWW.WWWWW.WWWWW.WWWWW.WWW.WW",
-        "WWW.WWWWW.WWWWW.WWWWW.WWW.WW",
-        "W..........................W",
-        "W.WWWW.WWWWW.WWWWW.WWWW.WW.W",
-        "W.WWWW.WWWWW.WWWWW.WWWW.WW.W",
-        "W...G.....................W",
-        "WWW.WWWWW.WWWWW.WWWWW.WWW.WW",
-        "WWW.WWWWW.WWWWW.WWWWW.WWW.WW",
-        "W.........................oW",
-        "W.WWWW.WWWWW.WWWWW.WWWW.WW.W",
-        "W.WWWW.WWWWW.WWWWW.WWWW.WW.W",
-        "Wo.........................W",
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    ],
-    
-    # Level 9 - Zigzag
-    [
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-        "W..........................W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.........................oW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "Wo........................W",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "W..........................W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W...G.....................oW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "W..........................W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W...P.....G................W",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "W.........................oW",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "Wo.........................W",
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    ],
-    
-    # Level 10 - Final Challenge
-    [
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-        "W..........................W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.........................oW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "Wo........................W",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "W..........................W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W...G.....................oW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "W..........................W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W...P.....G................W",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "WWWW.WWWW.WWWW.WWWW.WWWW.WWW",
-        "W.........................oW",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "W.WWWW.WWWW.WWWW.WWWW.WWWW.W",
-        "Wo.........................W",
-        "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    ]
 ]
 
 
@@ -337,10 +49,6 @@ BOUNDARY = 30
 WALL_W = 15
 CARDINALS = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 DIR_ANGLE = {(1, 0): 0, (0, 1): 90, (-1, 0): 180, (0, -1): 270}
-
-
-def load_level(level_num):
-    return LEVEL_LAYOUTS[level_num - 1] if 1 <= level_num <= len(LEVEL_LAYOUTS) else LEVEL_LAYOUTS[0]
 
 
 class AnimatedBackground:
@@ -387,9 +95,14 @@ class Button:
         return self.hovered != prev
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEMOTION: self.check_hover(event.pos)
+        if event.type == pygame.MOUSEMOTION:
+            self.check_hover(event.pos)
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.hovered and self.callback:
-            self.callback(self.param if self.param is not None else ()); return True
+            if self.param is not None:
+                self.callback(self.param)
+            else:
+                self.callback()
+            return True
         return False
 
 
@@ -398,17 +111,12 @@ class Menu:
         self.screen, self.start_game_callback = screen, start_game_callback
         self.background = AnimatedBackground(screen)
         w, h = screen.get_width(), screen.get_height()
-        bw, bh, sp = 250, 50, 20
-        start_y = h // 4 + 50
+        bw, bh = 250, 50
         self.title_y, self.desc_y = h // 4 - 50, h // 4 + 50
         self.inst_y = h - 100
-        self.buttons = []
-        for row in range(2):
-            for col in range(5):
-                level = row * 5 + col + 1
-                x = (w - (bw * 5 + sp * 4)) // 2 + col * (bw + sp)
-                y = start_y + 100 + row * (bh + sp)
-                self.buttons.append(Button(screen, f"Level {level}", (x, y), (bw, bh), start_game_callback, level))
+        x = (w - bw) // 2
+        y = self.desc_y + 100
+        self.buttons = [Button(screen, "Start Game", (x, y), (bw, bh), start_game_callback)]
         self.logo_font = pygame.font.SysFont('Arial', 96, bold=True)
         self.info_font = pygame.font.SysFont('Arial', 32)
 
@@ -484,52 +192,80 @@ class PacMan:
                 (c[0] + math.cos(a + math.radians(self.mouth_angle)) * self.rect.width // 2, c[1] + math.sin(a + math.radians(self.mouth_angle)) * self.rect.width // 2)])
 
 
-def _cardinal_toward(rect, target_rect, toward=True):
-    dx = (target_rect.centerx - rect.centerx) * (1 if toward else -1)
-    dy = (target_rect.centery - rect.centery) * (1 if toward else -1)
-    length = max(0.1, math.sqrt(dx * dx + dy * dy))
-    dx, dy = dx / length, dy / length
-    return (1 if dx > 0 else -1, 0) if abs(dx) > abs(dy) else (0, 1 if dy > 0 else -1)
-
-
 class Ghost:
-    def __init__(self, x, y, size, color):
-        self.start_x, self.start_y, self.size, self.color = x, y, size, color
-        self.scared_color = (0, 0, 255)
-        self.behavior = random.choice(["chase", "random", "patrol"])
-        self.patrol_pts = [(random.randint(100, 700), random.randint(100, 500)) for _ in range(4)]
-        self.cur_patrol = 0
-        self.reset()
 
-    def reset(self): self.rect = pygame.Rect(self.start_x, self.start_y, self.size, self.size); self.direction = (0, 0); self.speed = 0.8
+    def __init__(self, x, y, size, color):
+        self.start_x = x
+        self.start_y = y
+        self.size = size
+        self.color = color
+        self.rect = pygame.Rect(x, y, size, size)
+        self.direction = random.choice(CARDINALS)
+        self.speed = 1.1
+        self.scared_color = (0, 0, 255)
+
+    def reset(self):
+        self.rect.x = self.start_x
+        self.rect.y = self.start_y
+        self.direction = random.choice(CARDINALS)
+
+    def valid_directions(self, walls):
+        dirs = []
+        for d in CARDINALS:
+            nr = self.rect.copy()
+            nr.x += d[0] * self.speed
+            nr.y += d[1] * self.speed
+            if not any(nr.colliderect(w) for w in walls):
+                dirs.append(d)
+        return dirs
+
+    def choose_direction(self, walls, target):
+        dirs = self.valid_directions(walls)
+        if not dirs:
+            return self.direction
+        opposite = (-self.direction[0], -self.direction[1])
+        if len(dirs) > 1 and opposite in dirs:
+            dirs.remove(opposite)
+        best_dir = None
+        best_dist = float("inf")
+        for d in dirs:
+            nr = self.rect.copy()
+            nr.x += d[0] * self.size
+            nr.y += d[1] * self.size
+            dx = target.centerx - nr.centerx
+            dy = target.centery - nr.centery
+            dist = dx * dx + dy * dy
+            if dist < best_dist:
+                best_dist = dist
+                best_dir = d
+        return best_dir if best_dir else random.choice(dirs)
 
     def update(self, walls, pacman, scared=False):
-        sp = self.speed * 0.3 if scared else self.speed
-        if scared: self.direction = _cardinal_toward(self.rect, pacman.rect, False)
-        elif self.behavior == "chase": self.direction = _cardinal_toward(self.rect, pacman.rect, True)
-        elif self.behavior == "random" and random.random() < 0.02: self.direction = random.choice(CARDINALS)
-        elif self.behavior == "patrol" and self.patrol_pts:
-            t = self.patrol_pts[self.cur_patrol]
-            dx, dy = t[0] - self.rect.centerx, t[1] - self.rect.centery
-            if abs(dx) < 10 and abs(dy) < 10: self.cur_patrol = (self.cur_patrol + 1) % len(self.patrol_pts)
-            else: self.direction = _cardinal_toward(self.rect, pygame.Rect(t[0], t[1], 1, 1), True)
-        nr = self.rect.copy(); nr.x += self.direction[0] * sp; nr.y += self.direction[1] * sp
-        if not any(nr.colliderect(w) for w in walls): self.rect = nr
+        if scared:
+            tx = self.rect.x - (pacman.rect.x - self.rect.x)
+            ty = self.rect.y - (pacman.rect.y - self.rect.y)
+            target = pygame.Rect(tx, ty, 1, 1)
         else:
-            for d in random.sample(CARDINALS, len(CARDINALS)):
-                nr = self.rect.copy(); nr.x += d[0] * self.speed; nr.y += d[1] * self.speed
-                if not any(nr.colliderect(w) for w in walls): self.direction = d; break
+            target = pacman.rect
+        self.direction = self.choose_direction(walls, target)
+        nr = self.rect.copy()
+        nr.x += self.direction[0] * self.speed
+        nr.y += self.direction[1] * self.speed
+        if not any(nr.colliderect(w) for w in walls):
+            self.rect = nr
 
     def draw(self, screen, scared=False):
         color = self.scared_color if scared else self.color
         ey = self.rect.centery - self.size // 4
         pygame.draw.circle(screen, color, (self.rect.centerx, ey), self.size // 2)
         pygame.draw.rect(screen, color, (self.rect.x, ey, self.size, self.size // 2))
-        for i in range(3): pygame.draw.circle(screen, (0, 0, 0), (self.rect.x + (i + 0.5) * (self.size // 3), self.rect.bottom), self.size // 6)
-        es = self.size // 5
-        for ox in (-es, es): pygame.draw.circle(screen, (255, 255, 255), (self.rect.centerx + ox, ey), es)
-        pu = (self.rect.centerx + self.direction[0] * es // 2, ey + self.direction[1] * es // 2)
-        for ox in (-es, es): pygame.draw.circle(screen, (0, 0, 0) if scared else (0, 0, 255), (self.rect.centerx + ox + (0 if scared else self.direction[0] * es // 2), ey + (0 if scared else self.direction[1] * es // 2)), es // 2)
+        for i in range(3):
+            pygame.draw.circle(
+                screen,
+                (0, 0, 0),
+                (self.rect.x + (i + 0.5) * (self.size // 3), self.rect.bottom),
+                self.size // 6,
+            )
 
 
 class Pellet:
@@ -547,14 +283,14 @@ class Pellet:
 
 
 class Game:
-    WALL_COLORS = [(0, 0, 255), (255, 0, 0), (0, 255, 0), (255, 255, 0), (255, 0, 255), (0, 255, 255), (255, 165, 0), (128, 0, 128), (0, 128, 0), (255, 192, 203)]
+    WALL_COLOR = (0, 0, 255)
     KEY_DIR = {pygame.K_LEFT: (-1, 0), pygame.K_RIGHT: (1, 0), pygame.K_UP: (0, -1), pygame.K_DOWN: (0, 1)}
 
     def __init__(self, screen, level_num, level_done, game_over):
-        self.screen, self.level_num = screen, level_num
+        self.screen = screen
         self.level_done, self.game_over = level_done, game_over
         self.score, self.lives, self.paused = 0, 3, False
-        self.map_data = load_level(level_num)
+        self.map_data = LEVEL_LAYOUTS[0]
         mw, mh = len(self.map_data[0]) * TILE, len(self.map_data) * TILE
         self.map_ox = (screen.get_width() - mw) // 2
         self.map_oy = (screen.get_height() - mh) // 2
@@ -569,7 +305,9 @@ class Game:
             for x, cell in enumerate(row):
                 sx, sy = self.map_ox + x * TILE, self.map_oy + y * TILE
                 if cell == 'P': self.pacman = PacMan(sx, sy, TILE)
-                elif cell in ('G', 'g'): self.ghosts.append(Ghost(sx, sy, TILE, ghost_colors[len(self.ghosts) % 4]))
+                elif cell in ('G','g'):
+                    color = ghost_colors[len(self.ghosts) % len(ghost_colors)]
+                    self.ghosts.append(Ghost(sx, sy, TILE, color))
                 elif cell == '.': self.pellets.append(Pellet(sx, sy, TILE, False))
                 elif cell in ('O', 'o'): self.power_pellets.append(Pellet(sx, sy, TILE, True))
         self.wall_rects = [
@@ -606,19 +344,22 @@ class Game:
                         if self.lives <= 0: self.game_active = False; self.game_over(self.score)
                         else: self.pacman.reset(); [x.reset() for x in self.ghosts]
         scared = self.power_active and (self.power_timer >= 60 or self.power_timer % 10 < 5)
-        for g in self.ghosts: g.update(self.wall_rects, self.pacman, scared)
+        for g in self.ghosts:
+            g.update(self.wall_rects, self.pacman, scared)
+        
         if self.power_active: self.power_timer -= 1; self.power_active = self.power_timer > 0
         if not self.pellets and not self.power_pellets: self.game_active = False; self.level_done(self.score)
 
     def draw(self):
-        wc = self.WALL_COLORS[self.level_num - 1]
-        for w in self.wall_rects: pygame.draw.rect(self.screen, wc, w)
+        for w in self.wall_rects:
+            pygame.draw.rect(self.screen, self.WALL_COLOR, w)
         for p in self.pellets: p.draw(self.screen)
         for p in self.power_pellets: p.draw(self.screen)
         for g in self.ghosts: g.draw(self.screen, self.power_active)
-        if self.pacman: self.pacman.draw(self.screen)
-        for i, t in enumerate([(f"Score: {self.score}", 20), (f"Lives: {self.lives}", 50), (f"Level: {self.level_num}", 80)]):
-            self.screen.blit(self.font.render(t[0], True, (255, 255, 255)), (20, t[1]))
+        if self.pacman:
+            self.pacman.draw(self.screen)
+        for text, y in [(f"Score: {self.score}", 20), (f"Lives: {self.lives}", 50)]:
+            self.screen.blit(self.font.render(text, True, (255, 255, 255)), (20, y))
         if self.paused:
             pt = pygame.font.SysFont('Arial', 48).render("PAUSED", True, (255, 255, 255))
             self.screen.blit(pt, pt.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 2)))
@@ -637,19 +378,17 @@ MENU, PLAYING, GAME_OVER, LEVEL_COMPLETE = 0, 1, 2, 3
 class PacManGame:
     def __init__(self):
         self.screen, self.clock = screen, clock
-        self.state, self.level, self.score = MENU, 1, 0
+        self.state, self.score = MENU, 0
         self.menu = Menu(screen, self.start_game)
         self.game = None
 
-    def start_game(self, level=1):
-        self.level = level
-        self.game = Game(screen, level, self.end_level, self.game_over_cb)
+    def start_game(self):
+        self.game = Game(screen, 1, self.end_level, self.game_over_cb)
         self.state = PLAYING
 
     def end_level(self, score):
-        self.score += score; self.level += 1
-        self.state = MENU if self.level > 10 else LEVEL_COMPLETE
-        if self.level > 10: self.level = 1
+        self.score += score
+        self.state = LEVEL_COMPLETE
 
     def game_over_cb(self, score): self.score += score; self.state = GAME_OVER
 
@@ -658,15 +397,23 @@ class PacManGame:
         while running:
             for e in pygame.event.get():
                 if e.type == pygame.QUIT: running = False
-                if self.state == MENU: self.menu.handle_event(e)
-                elif self.state == PLAYING: self.game.handle_event(e)
-                elif self.state == GAME_OVER and e.type == pygame.KEYDOWN and e.key == pygame.K_RETURN: self.state = MENU
-                elif self.state == LEVEL_COMPLETE and e.type == pygame.KEYDOWN and e.key == pygame.K_RETURN: self.start_game(self.level)
-            if self.state == MENU: self.menu.update()
-            elif self.state == PLAYING: self.game.update()
+                if self.state == MENU:
+                    self.menu.handle_event(e)
+                elif self.state == PLAYING:
+                    self.game.handle_event(e)
+                elif self.state == GAME_OVER and e.type == pygame.KEYDOWN and e.key == pygame.K_RETURN:
+                    self.state = MENU
+                elif self.state == LEVEL_COMPLETE and e.type == pygame.KEYDOWN and e.key == pygame.K_RETURN:
+                    self.start_game()
+            if self.state == MENU:
+                self.menu.update()
+            elif self.state == PLAYING:
+                self.game.update()
             self.screen.fill((0, 0, 0))
-            if self.state == MENU: self.menu.draw()
-            elif self.state == PLAYING: self.game.draw()
+            if self.state == MENU:
+                self.menu.draw()
+            elif self.state == PLAYING:
+                self.game.draw()
             elif self.state == GAME_OVER:
                 f = pygame.font.SysFont('Arial', 48)
                 for i, (txt, color) in enumerate([('GAME OVER', (255, 0, 0)), (f'Score: {self.score}', (255, 255, 255)), ('Press Enter to continue', (255, 255, 255))]):
@@ -674,7 +421,7 @@ class PacManGame:
                     self.screen.blit(s, (SCREEN_W // 2 - s.get_width() // 2, SCREEN_H // 2 - 100 + i * 100))
             elif self.state == LEVEL_COMPLETE:
                 f = pygame.font.SysFont('Arial', 48)
-                for i, txt in enumerate([f'Level {self.level - 1} Complete!', f'Score: {self.score}', 'Press Enter to continue to next level']):
+                for i, txt in enumerate(['Level Complete!', f'Score: {self.score}', 'Press Enter to play again']):
                     s = f.render(txt, True, (255, 255, 0) if i == 0 else (255, 255, 255))
                     self.screen.blit(s, (SCREEN_W // 2 - s.get_width() // 2, SCREEN_H // 2 - 100 + i * 100))
             pygame.display.flip(); self.clock.tick(60)
