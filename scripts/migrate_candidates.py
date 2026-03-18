@@ -1,13 +1,13 @@
 import requests
 import os
-import csv
+import pandas as pd
 import json
 import time
 
 # -----------------------------
-# CONFIGURATION
+# LOAD CONFIG
 # -----------------------------
-# Read API keys and config from environment
+
 MANATAL_API_KEY = os.getenv("MANATAL_API_KEY")
 ASHBY_API_KEY = os.getenv("ASHBY_API_KEY")
 PER_PAGE = int(os.getenv("PER_PAGE", 100))
@@ -21,7 +21,7 @@ os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 os.makedirs(RESUME_FOLDER, exist_ok=True)
 
 # -----------------------------
-# HELPER FUNCTIONS
+# CHECKPOINT FUNCTIONS
 # -----------------------------
 def read_checkpoint():
     if os.path.exists(CHECKPOINT_FILE):
@@ -33,16 +33,28 @@ def save_checkpoint(last_id):
     with open(CHECKPOINT_FILE, "w") as f:
         json.dump({"last_id": last_id}, f)
 
+# -----------------------------
+# LOGGING WITH PANDAS
+# -----------------------------
+if os.path.exists(LOG_FILE):
+    log_df = pd.read_csv(LOG_FILE)
+else:
+    log_df = pd.DataFrame(columns=["manatal_id","ashby_id","cv","notes","tags","error"])
+
 def log_candidate(manatal_id, ashby_id, cv_status, notes_status, tags_status, error=""):
-    file_exists = os.path.exists(LOG_FILE)
-    with open(LOG_FILE, "a", newline="") as f:
-        writer = csv.writer(f)
-        if not file_exists:
-            writer.writerow(["manatal_id","ashby_id","cv","notes","tags","error"])
-        writer.writerow([manatal_id, ashby_id, cv_status, notes_status, tags_status, error])
+    global log_df
+    log_df = pd.concat([log_df, pd.DataFrame([{
+        "manatal_id": manatal_id,
+        "ashby_id": ashby_id,
+        "cv": cv_status,
+        "notes": notes_status,
+        "tags": tags_status,
+        "error": error
+    }])], ignore_index=True)
+    log_df.to_csv(LOG_FILE, index=False)
 
 # -----------------------------
-# MANATAL FUNCTIONS
+# MANATAL API FUNCTIONS
 # -----------------------------
 def fetch_candidates(page=1):
     url = f"https://api.manatal.com/open/v3/candidates?page={page}&per_page={PER_PAGE}"
@@ -66,7 +78,7 @@ def download_resume(url, candidate_id):
         return None
 
 # -----------------------------
-# ASHBY FUNCTIONS
+# ASHBY API FUNCTIONS
 # -----------------------------
 def create_candidate_ashby(candidate):
     url = "https://api.ashbyhq.com/v1/candidates"
@@ -86,19 +98,20 @@ def upload_resume_ashby(ashby_id, resume_file):
     try:
         url = f"https://api.ashbyhq.com/v1/candidates/{ashby_id}/resume"
         headers = {"Authorization": f"Bearer {ASHBY_API_KEY}"}
-        files = {"file": (os.path.basename(resume_file), open(resume_file, "rb"))}
-        response = requests.post(url, files=files, headers=headers)
+        with open(resume_file, "rb") as f:
+            files = {"file": (os.path.basename(resume_file), f)}
+            response = requests.post(url, files=files, headers=headers)
         return response.status_code == 200
     except Exception as e:
         print(f"Resume upload failed for Ashby ID {ashby_id}: {e}")
         return False
 
 def add_tags_ashby(ashby_id, tags):
-    # Placeholder: implement actual tag creation/assignment if Ashby API supports
-    return True
+    # Placeholder: implement actual tag creation/assignment if Ashby API supports it
+    return True if tags else False
 
 # -----------------------------
-# MAIN MIGRATION LOGIC
+# DATA TRANSFORMATION
 # -----------------------------
 def map_candidate(manatal_candidate):
     return {
@@ -109,6 +122,9 @@ def map_candidate(manatal_candidate):
         "resume_url": manatal_candidate.get("resume_url")
     }
 
+# -----------------------------
+# MAIN MIGRATION LOGIC
+# -----------------------------
 def migrate():
     last_processed = read_checkpoint()
     page = 1
