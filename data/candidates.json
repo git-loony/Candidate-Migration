@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "first_name": "Alice",
+    "last_name": "Smith",
+    "email": "alice@test.com",
+    "notes": "Senior Python Developer",
+    "tags": ["python", "backend"],
+    "resume_url": null
+  },
+  {
+    "id": 2,
+    "first_name": "Bob",
+    "last_name": "Johnson",
+    "email": "bob@test.com",
+    "notes": "Frontend Engineer",
+    "tags": ["react", "javascript"],
+    "resume_url": null
+  },
+  {
+    "id": 3,
+    "first_name": "Charlie",
+    "last_name": "Brown",
+    "email": "charlie@test.com",
+    "notes": "",
+    "tags": [],
+    "resume_url": null
+  }
+]
