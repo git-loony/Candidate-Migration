@@ -12,3 +12,7 @@ API_SLEEP = float(os.getenv("API_SLEEP", 1))
 DB_FILE = "../migration.db"
 LOG_EXPORT_FILE = "../logs/migration_log.csv"
 RESUME_FOLDER = "../resumes"
+
+# -test-
+MOCK_MODE = os.getenv("MOCK_MODE", "false").lower() == "true"
+print("Mock_mode: ", MOCK_MODE)
