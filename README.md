@@ -56,7 +56,7 @@ migration-project/
 
 ```bash
 git clone <your-repo-url>
-cd migration-project
+cd candidate-migration
 ````
 
 ---

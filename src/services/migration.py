@@ -1,6 +1,9 @@
 import time
-from src.api.manatal import fetch_candidates, download_resume
-from src.api.ashby import create_candidate, upload_resume, add_tags
+import requests
+import io
+
+from src.api.manatal import fetch_candidates
+from src.api.ashby import create_candidate, upload_resume_stream, add_tags
 from src.services.transform import map_candidate
 from src.db.operations import log_candidate, get_last_processed_id
 from src.config import API_SLEEP
@@ -27,10 +30,18 @@ def migrate():
             try:
                 ashby_id = create_candidate(candidate)
 
+                # Resume streaming
                 cv_status = False
                 if candidate["resume_url"]:
-                    file = download_resume(candidate["resume_url"], manatal_id)
-                    cv_status = upload_resume(ashby_id, file)
+                    try:
+                        response = requests.get(candidate["resume_url"])
+                        response.raise_for_status()
+
+                        file_bytes = io.BytesIO(response.content)
+                        cv_status = upload_resume_stream(ashby_id, file_bytes)
+
+                    except Exception as e:
+                        print(f"Resume error: {e}")
 
                 notes_status = bool(candidate["notes"])
                 tags_status = add_tags(ashby_id, candidate["tags"])

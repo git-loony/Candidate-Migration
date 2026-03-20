@@ -1,8 +1,10 @@
-def map_candidate(manatal_candidate):
+def map_candidate(m):
+    custom_fields = m.get("custom_fields", {})
+
     return {
-        "full_name": f"{manatal_candidate.get('first_name','')} {manatal_candidate.get('last_name','')}".strip(),
-        "email": manatal_candidate.get("email"),
-        "notes": manatal_candidate.get("notes", ""),
-        "tags": manatal_candidate.get("tags", []),
-        "resume_url": manatal_candidate.get("resume_url")
+        "full_name": m.get("full_name", "").strip(),
+        "email": m.get("email"),
+        "notes": m.get("description", ""),
+        "tags": custom_fields.get("skills", []),
+        "resume_url": m.get("resume")
     }
