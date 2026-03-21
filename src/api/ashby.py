@@ -6,7 +6,7 @@ FAKE_DB = {
     "candidates": {}
 }
 
-RESUME_STORAGE = "../fake_ashby_resumes"
+RESUME_STORAGE = "resumes"
 os.makedirs(RESUME_STORAGE, exist_ok=True)
 
 

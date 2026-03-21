@@ -3,7 +3,7 @@ import time
 from src.api.manatal import fetch_candidates_from_file, download_resume
 from src.services.transform import map_candidate
 from src.db.operations import log_candidate, get_last_processed_id
-from src.config import API_SLEEP
+from src.config import API_SLEEP, PER_PAGE
 from src.api.ashby import create_candidate, upload_resume, add_tags
 
 from src.services.ashby_mapper import map_to_ashby_format
@@ -17,7 +17,7 @@ DATA_FILE = "data/candidates.json"
 def migrate():
     last_processed = get_last_processed_id()
     page = 1
-    per_page = 10
+    per_page = PER_PAGE
 
     print("🚀 Starting migration...")
 

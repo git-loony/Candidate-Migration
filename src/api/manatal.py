@@ -3,7 +3,7 @@ import os
 import requests
 from src.config import RESUME_FOLDER
 
-def fetch_candidates_from_file(file_path, page=1, per_page=10):
+def fetch_candidates_from_file(file_path, page=1, per_page=50):
     with open(file_path, "r") as f:
         data = json.load(f)
 
