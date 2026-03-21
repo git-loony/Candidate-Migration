@@ -1,43 +1,62 @@
-from src.config import MOCK_MODE
-import random
+import uuid
+import os
+import shutil
+
+FAKE_DB = {
+    "candidates": {}
+}
+
+RESUME_STORAGE = "../fake_ashby_resumes"
+os.makedirs(RESUME_STORAGE, exist_ok=True)
+
 
 def create_candidate(candidate):
-    if MOCK_MODE:
-        return f"mock_{random.randint(1000,9999)}"
+    """Simulate creating a candidate in Ashby"""
+    fake_id = str(uuid.uuid4())
 
-    import requests
-    from src.config import ASHBY_API_KEY
-
-    url = "https://api.ashbyhq.com/v1/candidates"
-    headers = {
-        "Authorization": f"Bearer {ASHBY_API_KEY}",
-        "Content-Type": "application/json"
+    FAKE_DB["candidates"][fake_id] = {
+        "id": fake_id,
+        "full_name": candidate["full_name"],
+        "email": candidate["email"],
+        "notes": candidate["notes"],
+        "tags": [],
+        "resume": None
     }
 
-    response = requests.post(url, json=candidate, headers=headers)
-    response.raise_for_status()
-
-    return response.json()["id"]
+    print(f"[FAKE ASHBY] Created candidate {fake_id}")
+    return fake_id
 
 
-def upload_resume_stream(ashby_id, file_bytes):
-    if MOCK_MODE:
+def upload_resume(ashby_id, resume_file):
+    """Simulate resume upload"""
+    if not resume_file or ashby_id not in FAKE_DB["candidates"]:
+        return False
+
+    try:
+        dest_path = os.path.join(RESUME_STORAGE, f"{ashby_id}.pdf")
+        shutil.copy(resume_file, dest_path)
+
+        FAKE_DB["candidates"][ashby_id]["resume"] = dest_path
+
+        print(f"[FAKE ASHBY] Resume uploaded for {ashby_id}")
         return True
 
-    import requests
-    from src.config import ASHBY_API_KEY
-
-    url = f"https://api.ashbyhq.com/v1/candidates/{ashby_id}/resume"
-    headers = {"Authorization": f"Bearer {ASHBY_API_KEY}"}
-
-    files = {"file": ("resume.pdf", file_bytes)}
-
-    response = requests.post(url, files=files, headers=headers)
-
-    return response.status_code == 200
+    except Exception as e:
+        print(f"[FAKE ASHBY] Resume upload failed: {e}")
+        return False
 
 
 def add_tags(ashby_id, tags):
-    if MOCK_MODE:
-        return True
+    """Simulate adding tags"""
+    if ashby_id not in FAKE_DB["candidates"]:
+        return False
+
+    FAKE_DB["candidates"][ashby_id]["tags"].extend(tags)
+
+    print(f"[FAKE ASHBY] Tags added to {ashby_id}: {tags}")
     return True
+
+
+def get_all_candidates():
+    """Inspect stored data"""
+    return FAKE_DB["candidates"]

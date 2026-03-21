@@ -1,31 +1,34 @@
-from src.config import MOCK_MODE
+import json
+import os
+import requests
+from src.config import RESUME_FOLDER
 
-def fetch_candidates(page=1):
-    if MOCK_MODE:
-        if page > 3:
-            return []
+def fetch_candidates_from_file(file_path, page=1, per_page=10):
+    with open(file_path, "r") as f:
+        data = json.load(f)
 
-        return [
-            {
-                "id": page * 10 + i,
-                "full_name": f"Test User {i}",
-                "email": f"user{i}@test.com",
-                "description": "Mock candidate",
-                "resume": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                "custom_fields": {
-                    "skills": ["Python", "SQL"]
-                }
-            }
-            for i in range(5)
-        ]
+    # Simple pagination simulation
+    start = (page - 1) * per_page
+    end = start + per_page
+    return data[start:end]
 
-    import requests
-    from src.config import MANATAL_API_KEY, PER_PAGE
 
-    url = f"https://api.manatal.com/open/v3/candidates?page={page}&per_page={PER_PAGE}"
-    headers = {"Authorization": f"Bearer {MANATAL_API_KEY}"}
+def download_resume(url, candidate_id):
+    if not url:
+        return None
 
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
 
-    return response.json()
+        os.makedirs(RESUME_FOLDER, exist_ok=True)
+        file_path = os.path.join(RESUME_FOLDER, f"{candidate_id}.pdf")
+
+        with open(file_path, "wb") as f:
+            f.write(response.content)
+
+        return file_path
+
+    except Exception as e:
+        print(f"Resume download failed for {candidate_id}: {e}")
+        return None
